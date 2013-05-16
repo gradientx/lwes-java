@@ -10,7 +10,7 @@ import org.xerial.snappy.Snappy;
  * @author dgoya
  *
  */
-public class UnicastSnappyEventEmitter extends UnicastEventEmitter {
+public class SnappyUnicastEventEmitter extends UnicastEventEmitter {
 
 	/**
 	 * Emits the compressed event to the network.
