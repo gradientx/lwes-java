@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
     <groupId>com.gradientx</groupId>
     <artifactId>lwes-java</artifactId>
     <packaging>jar</packaging>
@@ -19,17 +19,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lwes.java.home>/usr/share/lwes-java</lwes.java.home>
-    </properties>
-
-    <scm>
-        <connection>scm:git:git@github.com:lwes/lwes-java.git</connection>
-        <developerConnection>scm:git:git@github.com:lwes/lwes-java.git</developerConnection>
-        <url>https://github.com/lwes/lwes-java</url>
-    </scm>
-
     <developers>
         <developer>
             <id>lwes-team</id>
@@ -37,58 +26,74 @@
             <email>lwes-devel@sourceforge.net</email>
         </developer>
     </developers>
-    
-    
-  
-  <repositories>
-    <repository>
-      <id>gradientx-release-repo</id>
-      <name>Gradient X Release Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/release</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>gradientx-snapshot-repo</id>
-      <name>Gradient X Snapshot Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>gradientx-release-repo</id>
-      <name>Gradient X Release Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/release</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>gradientx-snapshot-repo</id>
-      <name>Gradient X Snapshot Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/snapshot</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
+
+    <scm>
+        <url>https://github.com/lwes/lwes-java</url>
+        <connection>scm:git:git://github.com/gradientx/lwes-java.git</connection>
+        <developerConnection>scm:git:git@github.com:gradientx/lwes-java.git</developerConnection>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lwes.java.home>/usr/share/lwes-java</lwes.java.home>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>gradientx-release-repo</id>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/libs-release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>gradientx-snapshot-repo</id>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/libs-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>gradientx-plugins-release-repo</id>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/plugins-release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>gradientx-plugins-snapshot-repo</id>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/plugins-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>gradientx-release-repo</id>
+            <name>Gradient X Release Repository</name>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>gradientx-snapshot-repo</id>
+            <name>Gradient X Snapshot Repository</name>
+            <url>http://prod-artifactory001.pe1i.gradientx.com:8081/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -152,20 +157,20 @@
             </exclusions>
         </dependency>
         <dependency>
-          <groupId>org.xerial.snappy</groupId>
-          <artifactId>snappy-java</artifactId>
-          <version>1.1.0-M3</version>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.0-M3</version>
         </dependency>
     </dependencies>
 
     <build>
-    <extensions>
-      <extension>
-        <groupId>org.springframework.build.aws</groupId>
-        <artifactId>org.springframework.build.aws.maven</artifactId>
-        <version>3.0.0.RELEASE</version>
-      </extension>
-    </extensions>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build.aws</groupId>
+                <artifactId>org.springframework.build.aws.maven</artifactId>
+                <version>3.0.0.RELEASE</version>
+            </extension>
+        </extensions>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -356,77 +361,65 @@
                             </sources>
                         </mapping>
                         <mapping>
-                        <directory>/etc/profile.d</directory>
-                        <filemode>755</filemode>
-                        <username>root</username>
-                        <groupname>root</groupname>
-                        <sources>
-                            <source>
-                                <location>target/classes/lwes-java.sh</location>
-                            </source>
-                        </sources>
-                    </mapping>
+                            <directory>/etc/profile.d</directory>
+                            <filemode>755</filemode>
+                            <username>root</username>
+                            <groupname>root</groupname>
+                            <sources>
+                                <source>
+                                    <location>target/classes/lwes-java.sh</location>
+                                </source>
+                            </sources>
+                        </mapping>
                     </mappings>
                 </configuration>
             </plugin>
         </plugins>
-        
+
         <pluginManagement>
-          <plugins>
-            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-            <plugin>
-              <groupId>org.eclipse.m2e</groupId>
-              <artifactId>lifecycle-mapping</artifactId>
-              <version>1.0.0</version>
-              <configuration>
-                <lifecycleMappingMetadata>
-                  <pluginExecutions>
-                    <pluginExecution>
-                      <pluginExecutionFilter>
-                        <groupId>
-                          com.google.code.maven-replacer-plugin
-                        </groupId>
-                        <artifactId>maven-replacer-plugin</artifactId>
-                        <versionRange>[1.3.2,)</versionRange>
-                        <goals>
-                          <goal>replace</goal>
-                        </goals>
-                      </pluginExecutionFilter>
-                      <action>
-                        <ignore></ignore>
-                      </action>
-                    </pluginExecution>
-                    <pluginExecution>
-                      <pluginExecutionFilter>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>javacc-maven-plugin</artifactId>
-                        <versionRange>[2.6,)</versionRange>
-                        <goals>
-                          <goal>javacc</goal>
-                        </goals>
-                      </pluginExecutionFilter>
-                      <action>
-                        <ignore></ignore>
-                      </action>
-                    </pluginExecution>
-                  </pluginExecutions>
-                </lifecycleMappingMetadata>
-              </configuration>
-            </plugin>
-          </plugins>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            com.google.code.maven-replacer-plugin
+                                        </groupId>
+                                        <artifactId>maven-replacer-plugin</artifactId>
+                                        <versionRange>[1.3.2,)</versionRange>
+                                        <goals>
+                                            <goal>replace</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>javacc-maven-plugin</artifactId>
+                                        <versionRange>[2.6,)</versionRange>
+                                        <goals>
+                                            <goal>javacc</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
-  
-  <distributionManagement>
-    <repository>
-      <id>gradientx-release-repo</id>
-      <name>Gradient X Release Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/release</url>
-    </repository>
-    <snapshotRepository>
-      <id>gradientx-snapshot-repo</id>
-      <name>Gradient X Snapshot Repository</name>
-      <url>s3://codex.corp.gradientx.com/maven/snapshot</url>
-    </snapshotRepository>
-  </distributionManagement>
+
 </project>
