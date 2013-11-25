@@ -28,7 +28,7 @@
     </developers>
 
     <scm>
-        <url>https://github.com/lwes/lwes-java</url>
+        <url>https://github.com/gradientx/lwes-java</url>
         <connection>scm:git:git://github.com/gradientx/lwes-java.git</connection>
         <developerConnection>scm:git:git@github.com:gradientx/lwes-java.git</developerConnection>
     </scm>
