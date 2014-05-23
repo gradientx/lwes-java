@@ -120,7 +120,7 @@
     <extensions>
       <extension>
         <groupId>org.springframework.build</groupId>
-        <artifactId>org.springframework.build.maven</artifactId>
+        <artifactId>aws-maven</artifactId>
         <version>5.0.0.RELEASE</version>
       </extension>
     </extensions>
