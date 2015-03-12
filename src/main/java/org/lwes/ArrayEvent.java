@@ -13,6 +13,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -38,6 +39,8 @@ public final class ArrayEvent extends DefaultEvent {
     private short encoding = DEFAULT_ENCODING;
     private static Map<ArrayEventStats, MutableInt> STATS =
             new EnumMap<ArrayEventStats, MutableInt>(ArrayEventStats.class);
+    
+    private static final byte[] ENCODING_BYTES = EncodedString.getBytes(ENCODING, ENCODING_STRINGS[DEFAULT_ENCODING]);
 
     static {
         byte[] temp = new byte[256];
@@ -100,11 +103,10 @@ public final class ArrayEvent extends DefaultEvent {
         tempState.reset();
         encoding = DEFAULT_ENCODING;
     }
-
-    @Override
-    public void clear(String key) {
-    	cachedKeyIndexes.remove(key);
-        final int fieldIndex = find(key);
+    
+    public void clear(byte[] keyBytes){
+    	final int fieldIndex = find(keyBytes);
+    	cachedKeyIndexes.remove(ByteBuffer.wrap(keyBytes));
         if (fieldIndex < 0) {
             return;
         }
@@ -114,6 +116,11 @@ public final class ArrayEvent extends DefaultEvent {
         final int nextIndex = valueIndex + getValueByteSize(type, valueIndex);
         shiftTail(nextIndex, fieldIndex);
         setNumEventAttributes(getNumEventAttributes() - 1);
+    }
+
+    @Override
+    public void clear(String key) {
+    	clear(EncodedString.getBytes(key, ENCODING_STRINGS[DEFAULT_ENCODING]));
     }
 
     @Override
@@ -158,11 +165,11 @@ public final class ArrayEvent extends DefaultEvent {
         }
         else {
             if (type == FieldType.STRING || type == FieldType.STRING_ARRAY) {
-                if (find(ENCODING) < 0) {
+                if (find(ENCODING_BYTES) < 0) {
                     setEncoding(encoding);
                 }
             }
-            final int fieldIndex = find(key);
+            final int fieldIndex = find(EncodedString.getBytes(key, ENCODING_STRINGS[DEFAULT_ENCODING]));
             if (fieldIndex >= 0) {
                 // Found the field.  Can we modify it in place?
                 final int tokenIndex = getTokenIndexFromFieldIndex(fieldIndex);
@@ -287,9 +294,8 @@ public final class ArrayEvent extends DefaultEvent {
         return fields;
     }
 
-    @Override
-    public FieldType getType(String attributeName) {
-        final int fieldIndex = find(attributeName);
+    public FieldType getType(byte[] attributeNameBytes){
+    	final int fieldIndex = find(attributeNameBytes);
         if (fieldIndex < 0) {
             return null;
         }
@@ -297,10 +303,14 @@ public final class ArrayEvent extends DefaultEvent {
         final int tokenIndex = getTokenIndexFromFieldIndex(fieldIndex);
         return FieldType.byToken(bytes[tokenIndex]);
     }
-
+    
     @Override
-    public Object get(String attributeName) {
-        final int fieldIndex = find(attributeName);
+    public FieldType getType(String attributeName) {
+        return getType(EncodedString.getBytes(attributeName, ENCODING_STRINGS[DEFAULT_ENCODING]));
+    }
+    
+    public Object get(byte[] attributeNameBytes){
+    	final int fieldIndex = find(attributeNameBytes);
         if (fieldIndex < 0) {
             return null;
         }
@@ -308,6 +318,11 @@ public final class ArrayEvent extends DefaultEvent {
         final int tokenIndex = getTokenIndexFromFieldIndex(fieldIndex);
         final FieldType type = FieldType.byToken(bytes[tokenIndex]);
         return get(type, tokenIndex + 1);
+    }
+
+    @Override
+    public Object get(String attributeName) {
+        return get(EncodedString.getBytes(attributeName, ENCODING_STRINGS[DEFAULT_ENCODING]));
     }
 
     private Object get(FieldType type, int valueIndex) {
@@ -425,17 +440,17 @@ public final class ArrayEvent extends DefaultEvent {
         return new ArrayEvent(bytes, length, encoding);
     }
     
-    private final Map<String, Integer> cachedKeyIndexes = new HashMap<String, Integer>();
+    private final Map<ByteBuffer, Integer> cachedKeyIndexes = new HashMap<ByteBuffer, Integer>();
 
-    private int find(String key) {
-    	Integer cachedKeyIndex = cachedKeyIndexes.get(key);
+    private int find(byte[] keyBytes) {
+    	ByteBuffer bb = ByteBuffer.wrap(keyBytes);
+    	Integer cachedKeyIndex = cachedKeyIndexes.get(bb);
     	if(cachedKeyIndex != null){
     		return cachedKeyIndex;
     	}
     	
         int count = 0;
         try {
-            final byte[] keyBytes = EncodedString.getBytes(key, ENCODING_STRINGS[DEFAULT_ENCODING]);
             for (tempState.set(getValueListIndex()); tempState.currentIndex() < length; ) {
                 ++count;
                 final int keyIndex = tempState.currentIndex();
@@ -445,8 +460,7 @@ public final class ArrayEvent extends DefaultEvent {
                 }
                 else {
                 	// store the field name and offset in a cache to make future lookups faster
-                    String wrongFieldKey = EncodedString.bytesToString(bytes, keyIndex + 1, keyLength, ENCODING_STRINGS[DEFAULT_ENCODING]);
-                    cachedKeyIndexes.put(wrongFieldKey, keyIndex);
+                    cachedKeyIndexes.put(ByteBuffer.wrap(bytes, keyIndex + 1, keyLength), keyIndex);
                     
                     // Wrong field.  Skip it, the type token, and the value.
                     tempState.incr(1 + keyLength);
