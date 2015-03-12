@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -101,6 +102,7 @@ public final class ArrayEvent extends DefaultEvent {
 
     @Override
     public void clear(String key) {
+    	cachedKeyIndexes.remove(key);
         final int fieldIndex = find(key);
         if (fieldIndex < 0) {
             return;
@@ -421,8 +423,15 @@ public final class ArrayEvent extends DefaultEvent {
         STATS.get(ArrayEventStats.COPIES).increment();
         return new ArrayEvent(bytes, length, encoding);
     }
+    
+    private final Map<String, Integer> cachedKeyIndexes = new HashMap<String, Integer>();
 
     private int find(String key) {
+    	Integer cachedKeyIndex = cachedKeyIndexes.get(key);
+    	if(cachedKeyIndex != null){
+    		return cachedKeyIndex;
+    	}
+    	
         int count = 0;
         try {
             final byte[] keyBytes = EncodedString.getBytes(key, ENCODING_STRINGS[DEFAULT_ENCODING]);
@@ -434,6 +443,10 @@ public final class ArrayEvent extends DefaultEvent {
                     return keyIndex;
                 }
                 else {
+                	// store the field name and offset in a cache to make future lookups faster
+                    String wrongFieldKey = EncodedString.bytesToString(bytes, keyIndex + 1, keyLength, ENCODING_STRINGS[DEFAULT_ENCODING]);
+                    cachedKeyIndexes.put(wrongFieldKey, keyIndex);
+                    
                     // Wrong field.  Skip it, the type token, and the value.
                     tempState.incr(1 + keyLength);
                     final FieldType type = FieldType.byToken(bytes[tempState.currentIndex()]);
