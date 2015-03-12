@@ -94,6 +94,7 @@ public final class ArrayEvent extends DefaultEvent {
 
     @Override
     public void reset() {
+    	cachedKeyIndexes.clear();
         Arrays.fill(bytes, (byte) 0);
         length = getValueListIndex();
         tempState.reset();
